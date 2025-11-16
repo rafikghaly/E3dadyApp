@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Points - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🎁 Kids Points Store</h1>
+            <p class="subtitle">Login to spend your points!</p>
+            
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Enter your name" required>
+                <input type="password" id="pin" placeholder="Enter your PIN" required>
+                <button type="submit">Login</button>
+            </form>
+            
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const messageDiv = document.getElementById('message');
+        
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim().toLowerCase();
+            const pin = document.getElementById('pin').value;
+            
+            messageDiv.textContent = 'Logging in...';
+            messageDiv.className = 'message';
+            
+            try {
+                const result = await apiCall('login', { username, pin });
+                
+                if (result.success) {
+                    localStorage.setItem('username', result.data.username);
+                    localStorage.setItem('points', result.data.points);
+                    window.location.href = 'marketplace.html';
+                } else {
+                    messageDiv.textContent = result.message;
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Connection error. Try again!';
+                messageDiv.className = 'message error';
+            }
+        });
+    </script>
+</body>
+</html>
