@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Points - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🎁 Kids Points Store</h1>
+            <p class="subtitle">Login to spend your points!</p>
+            
+            <div class="form-container">
+                <input type="text" id="username" placeholder="Enter your name">
+                <input type="password" id="pin" placeholder="Enter your PIN">
+                <button onclick="handleLogin()">Login</button>
+            </div>
+            
+            <div id="message" class="message"></div>
+            
+            <button onclick="window.location.href='index.html'" class="back-btn">
+                ← Back to Leaderboard
+            </button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        async function handleLogin() {
+            const username = document.getElementById('username').value.trim().toLowerCase();
+            const pin = document.getElementById('pin').value;
+            const messageDiv = document.getElementById('message');
+            
+            if (!username || !pin) {
+                messageDiv.textContent = 'Please enter both username and PIN';
+                messageDiv.className = 'message error';
+                return;
+            }
+            
+            messageDiv.textContent = 'Logging in...';
+            messageDiv.className = 'message';
+            
+            try {
+                const result = await apiCall('login', { username, pin });
+                
+                if (result.success) {
+                    localStorage.setItem('username', result.data.username);
+                    localStorage.setItem('points', result.data.points);
+                    window.location.href = 'marketplace.html';
+                } else {
+                    messageDiv.textContent = result.message;
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Connection error. Try again!';
+                messageDiv.className = 'message error';
+            }
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('pin').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+        document.getElementById('username').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+    </script>
+</body>
+</html>
