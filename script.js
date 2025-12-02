@@ -1,5 +1,5 @@
 // Replace this with your actual Apps Script Web App URL
-const API_URL = 'https://script.google.com/macros/s/AKfycbyQNqIukQRuj2Eo35AOKGJPm9NzNBoe3D_HuKWvAkc3P89smHqf31ar1LiGVHxV3s7l4A/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbywKvXiQX7vj_345wRI2D5E9B7Dcn9OK6vv2oL8qD4lmmh_ghSoOijJecm9MjQyb0bdKw/exec';
 
 async function apiCall(action, data) {
     console.log('Making API call:', action, data);
@@ -30,6 +30,7 @@ async function apiCall(action, data) {
     console.log('API response:', result);
     return result;
 }
+
 
 
 
