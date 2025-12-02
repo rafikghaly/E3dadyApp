@@ -270,6 +270,20 @@ h2 {
     width: 100%;
 }
 
+.scrollable {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.button-container {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding-top: 10px;
+    margin-top: auto;
+}
+
 @media (max-width: 600px) {
     .header {
         flex-direction: column;
@@ -289,3 +303,4 @@ h2 {
         width: 100%;
     }
 }
+
