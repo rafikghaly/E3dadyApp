@@ -3,55 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids Points - Login</title>
+    <title>Kids Points - Marketplace</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>🎁 Kids Points Store</h1>
-            <p class="subtitle">Login to spend your points!</p>
+            <div class="header">
+                <h1>Hi <span id="childName"></span>! 👋</h1>
+                <div class="points-badge">
+                    <span id="pointsDisplay">0</span> points
+                </div>
+            </div>
             
-            <form id="loginForm">
-                <input type="text" id="username" placeholder="Enter your name" required>
-                <input type="password" id="pin" placeholder="Enter your PIN" required>
-                <button type="submit">Login</button>
-            </form>
+            <h2>🛍️ Marketplace</h2>
+            <div id="marketplace" class="marketplace"></div>
             
             <div id="message" class="message"></div>
+            
+            <button onclick="logout()" class="logout-btn">Logout</button>
+            
+            <button onclick="window.location.href='index.html'" class="back-btn" style="margin-top: 10px;">
+                🏆 View Leaderboard
+            </button>
         </div>
     </div>
     
     <script src="script.js"></script>
     <script>
-        const loginForm = document.getElementById('loginForm');
-        const messageDiv = document.getElementById('message');
+        let currentPoints = 0;
         
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        window.addEventListener('DOMContentLoaded', async () => {
+            const username = localStorage.getItem('username');
             
-            const username = document.getElementById('username').value.trim().toLowerCase();
-            const pin = document.getElementById('pin').value;
+            if (!username) {
+                window.location.href = 'index.html';
+                return;
+            }
             
-            messageDiv.textContent = 'Logging in...';
+            document.getElementById('childName').textContent = 
+                username.charAt(0).toUpperCase() + username.slice(1);
+            
+            await loadMarketplace();
+        });
+        
+        async function loadMarketplace() {
+            const username = localStorage.getItem('username');
+            const messageDiv = document.getElementById('message');
+            
+            try {
+                const result = await apiCall('getMarketplace', { username });
+                
+                if (result.success) {
+                    currentPoints = result.data.points;
+                    document.getElementById('pointsDisplay').textContent = currentPoints;
+                    
+                    const marketplace = document.getElementById('marketplace');
+                    marketplace.innerHTML = result.data.items.map(item => `
+                        <div class="item">
+                            <div class="item-info">
+                                <span class="item-name">${item.name}</span>
+                                <span class="item-cost">${item.cost} points</span>
+                            </div>
+                            <button 
+                                onclick="buyItem('${item.name}', ${item.cost})"
+                                class="buy-btn"
+                                ${currentPoints < item.cost ? 'disabled' : ''}>
+                                ${currentPoints >= item.cost ? 'Buy' : 'Not enough'}
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error loading marketplace';
+                messageDiv.className = 'message error';
+            }
+        }
+        
+        async function buyItem(giftName, cost) {
+            const username = localStorage.getItem('username');
+            const messageDiv = document.getElementById('message');
+            
+            if (currentPoints < cost) {
+                messageDiv.textContent = 'Not enough points!';
+                messageDiv.className = 'message error';
+                return;
+            }
+            
+            messageDiv.textContent = 'Processing...';
             messageDiv.className = 'message';
             
             try {
-                const result = await apiCall('login', { username, pin });
+                const result = await apiCall('purchaseGift', { 
+                    username, 
+                    gift: giftName, 
+                    cost 
+                });
                 
                 if (result.success) {
-                    localStorage.setItem('username', result.data.username);
-                    localStorage.setItem('points', result.data.points);
-                    window.location.href = 'marketplace.html';
+                    currentPoints = result.data.newPoints;
+                    document.getElementById('pointsDisplay').textContent = currentPoints;
+                    
+                    messageDiv.textContent = `🎉 You got: ${giftName}!`;
+                    messageDiv.className = 'message success';
+                    
+                    await loadMarketplace();
                 } else {
                     messageDiv.textContent = result.message;
                     messageDiv.className = 'message error';
                 }
             } catch (error) {
-                messageDiv.textContent = 'Connection error. Try again!';
+                messageDiv.textContent = 'Purchase failed. Try again!';
                 messageDiv.className = 'message error';
             }
-        });
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>
