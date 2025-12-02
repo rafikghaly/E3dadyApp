@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids Points - Leaderboard</title>
+    <title>E3dady Store - مين الأول!!!</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>🏆 Kids Points Leaderboard</h1>
-            <p class="subtitle">Who's in the lead?</p>
+            <div class="logo">🎯 E3dady</div>
+            
+            <h1>مين الأول!!!</h1>
+            <p class="subtitle">شوف مين كسبان</p>
             
             <div id="leaderboard" class="leaderboard scrollable">
-                <div class="loading">Loading leaderboard...</div>
+                <div class="loading">جاري التحميل...</div>
             </div>
             
             <div id="message" class="message"></div>
             
             <div class="button-container">
                 <button onclick="window.location.href='login.html'" class="login-btn">
-                    🎁 Go to Login & Shop
+                    🎁 دخول و تسوق
                 </button>
             </div>
         </div>
@@ -43,7 +45,7 @@
                     const leaderboard = result.data.leaderboard;
                     
                     if (leaderboard.length === 0) {
-                        leaderboardDiv.innerHTML = '<div class="empty">No players yet!</div>';
+                        leaderboardDiv.innerHTML = '<div class="empty">لسه مفيش لاعبين!</div>';
                         return;
                     }
                     
@@ -56,16 +58,16 @@
                             <div class="leaderboard-item ${rankClass}">
                                 <span class="rank">${medal}</span>
                                 <span class="player-name">${player.name}</span>
-                                <span class="player-points">${player.points} points</span>
+                                <span class="player-points">${player.points} نقطة</span>
                             </div>
                         `;
                     }).join('');
                 } else {
-                    leaderboardDiv.innerHTML = '<div class="error">Could not load leaderboard</div>';
+                    leaderboardDiv.innerHTML = '<div class="error">مش قادرين نحمل الترتيب</div>';
                 }
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
-                leaderboardDiv.innerHTML = '<div class="error">Failed to load leaderboard</div>';
+                leaderboardDiv.innerHTML = '<div class="error">فشل تحميل الترتيب</div>';
             }
         }
     </script>
