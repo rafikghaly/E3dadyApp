@@ -3,124 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids Points - Marketplace</title>
+    <title>Kids Points - Leaderboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <div class="header">
-                <h1>Hi <span id="childName"></span>! 👋</h1>
-                <div class="points-badge">
-                    <span id="pointsDisplay">0</span> points
-                </div>
+            <h1>🏆 Kids Points Leaderboard</h1>
+            <p class="subtitle">Who's in the lead?</p>
+            
+            <div id="leaderboard" class="leaderboard">
+                <div class="loading">Loading leaderboard...</div>
             </div>
             
-            <h2>🛍️ Marketplace</h2>
-            <div id="marketplace" class="marketplace"></div>
+            <button onclick="window.location.href='login.html'" class="login-btn">
+                🎁 Go to Login & Shop
+            </button>
             
             <div id="message" class="message"></div>
-            
-            <button onclick="logout()" class="logout-btn">Logout</button>
-            
-            <button onclick="window.location.href='index.html'" class="back-btn" style="margin-top: 10px;">
-                🏆 View Leaderboard
-            </button>
         </div>
     </div>
     
     <script src="script.js"></script>
     <script>
-        let currentPoints = 0;
-        
         window.addEventListener('DOMContentLoaded', async () => {
-            const username = localStorage.getItem('username');
-            
-            if (!username) {
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            document.getElementById('childName').textContent = 
-                username.charAt(0).toUpperCase() + username.slice(1);
-            
-            await loadMarketplace();
+            await loadLeaderboard();
         });
         
-        async function loadMarketplace() {
-            const username = localStorage.getItem('username');
+        async function loadLeaderboard() {
+            const leaderboardDiv = document.getElementById('leaderboard');
             const messageDiv = document.getElementById('message');
             
             try {
-                const result = await apiCall('getMarketplace', { username });
+                const result = await apiCall('getLeaderboard', {});
                 
-                if (result.success) {
-                    currentPoints = result.data.points;
-                    document.getElementById('pointsDisplay').textContent = currentPoints;
+                if (result.success && result.data.leaderboard) {
+                    const leaderboard = result.data.leaderboard;
                     
-                    const marketplace = document.getElementById('marketplace');
-                    marketplace.innerHTML = result.data.items.map(item => `
-                        <div class="item">
-                            <div class="item-info">
-                                <span class="item-name">${item.name}</span>
-                                <span class="item-cost">${item.cost} points</span>
+                    if (leaderboard.length === 0) {
+                        leaderboardDiv.innerHTML = '<div class="empty">No players yet!</div>';
+                        return;
+                    }
+                    
+                    leaderboardDiv.innerHTML = leaderboard.map((player, index) => {
+                        const medals = ['🥇', '🥈', '🥉'];
+                        const medal = index < 3 ? medals[index] : `${index + 1}.`;
+                        const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                        
+                        return `
+                            <div class="leaderboard-item ${rankClass}">
+                                <span class="rank">${medal}</span>
+                                <span class="player-name">${player.name}</span>
+                                <span class="player-points">${player.points} points</span>
                             </div>
-                            <button 
-                                onclick="buyItem('${item.name}', ${item.cost})"
-                                class="buy-btn"
-                                ${currentPoints < item.cost ? 'disabled' : ''}>
-                                ${currentPoints >= item.cost ? 'Buy' : 'Not enough'}
-                            </button>
-                        </div>
-                    `).join('');
-                }
-            } catch (error) {
-                messageDiv.textContent = 'Error loading marketplace';
-                messageDiv.className = 'message error';
-            }
-        }
-        
-        async function buyItem(giftName, cost) {
-            const username = localStorage.getItem('username');
-            const messageDiv = document.getElementById('message');
-            
-            if (currentPoints < cost) {
-                messageDiv.textContent = 'Not enough points!';
-                messageDiv.className = 'message error';
-                return;
-            }
-            
-            messageDiv.textContent = 'Processing...';
-            messageDiv.className = 'message';
-            
-            try {
-                const result = await apiCall('purchaseGift', { 
-                    username, 
-                    gift: giftName, 
-                    cost 
-                });
-                
-                if (result.success) {
-                    currentPoints = result.data.newPoints;
-                    document.getElementById('pointsDisplay').textContent = currentPoints;
-                    
-                    messageDiv.textContent = `🎉 You got: ${giftName}!`;
-                    messageDiv.className = 'message success';
-                    
-                    await loadMarketplace();
+                        `;
+                    }).join('');
                 } else {
-                    messageDiv.textContent = result.message;
-                    messageDiv.className = 'message error';
+                    leaderboardDiv.innerHTML = '<div class="error">Could not load leaderboard</div>';
                 }
             } catch (error) {
-                messageDiv.textContent = 'Purchase failed. Try again!';
-                messageDiv.className = 'message error';
+                console.error('Error loading leaderboard:', error);
+                leaderboardDiv.innerHTML = '<div class="error">Failed to load leaderboard</div>';
             }
-        }
-        
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'index.html';
         }
     </script>
 </body>
