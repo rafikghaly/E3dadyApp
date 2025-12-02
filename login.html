@@ -1,27 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids Points - Login</title>
+    <title>E3dady Store - تسجيل الدخول</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>🎁 Kids Points Store</h1>
-            <p class="subtitle">Login to spend your points!</p>
+            <div class="logo">🎯 E3dady</div>
+            
+            <h1>E3dady Store</h1>
+            <p class="subtitle">دخول عشان تصرف نقاطك!</p>
             
             <div class="form-container">
-                <input type="text" id="username" placeholder="Enter your name">
-                <input type="password" id="pin" placeholder="Enter your PIN">
-                <button onclick="handleLogin()">Login</button>
+                <input type="text" id="username" placeholder="اكتب اسمك">
+                <input type="password" id="pin" placeholder="اكتب الرقم السري">
+                <button onclick="handleLogin()">دخول</button>
             </div>
             
             <div id="message" class="message"></div>
             
             <button onclick="window.location.href='index.html'" class="back-btn">
-                ← Back to Leaderboard
+                ← رجوع للترتيب
             </button>
         </div>
     </div>
@@ -34,12 +36,12 @@
             const messageDiv = document.getElementById('message');
             
             if (!username || !pin) {
-                messageDiv.textContent = 'Please enter both username and PIN';
+                messageDiv.textContent = 'اكتب الاسم والرقم السري';
                 messageDiv.className = 'message error';
                 return;
             }
             
-            messageDiv.textContent = 'Logging in...';
+            messageDiv.textContent = 'جاري الدخول...';
             messageDiv.className = 'message';
             
             try {
@@ -54,7 +56,7 @@
                     messageDiv.className = 'message error';
                 }
             } catch (error) {
-                messageDiv.textContent = 'Connection error. Try again!';
+                messageDiv.textContent = 'مشكلة في الاتصال. حاول تاني!';
                 messageDiv.className = 'message error';
             }
         }
