@@ -150,26 +150,29 @@ h2 {
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
+}
+
+.marketplace.scrollable {
     max-height: 500px;
     overflow-y: auto;
     padding-right: 10px;
 }
 
-.marketplace::-webkit-scrollbar {
+.marketplace.scrollable::-webkit-scrollbar {
     width: 8px;
 }
 
-.marketplace::-webkit-scrollbar-track {
+.marketplace.scrollable::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
 }
 
-.marketplace::-webkit-scrollbar-thumb {
+.marketplace.scrollable::-webkit-scrollbar-thumb {
     background: #4CAF50;
     border-radius: 10px;
 }
 
-.marketplace::-webkit-scrollbar-thumb:hover {
+.marketplace.scrollable::-webkit-scrollbar-thumb:hover {
     background: #45a049;
 }
 
